@@ -1,0 +1,145 @@
+################################################################################
+# docker-compose for vllm-ascend-opt cluster
+#
+# Profiles:
+#   default:    single node (8x NPU), all-in-one serving
+#   disagg:     disaggregated prefill (4 NPU) + decode (4 NPU)
+#   eval:       lm-evaluation-harness runner
+#   sweep:      Ray-Train hyperparameter sweep
+#
+# Usage:
+#   docker compose up                              # Default serving
+#   docker compose --profile disagg up            # Disaggregated P/D
+#   docker compose --profile sweep up             # Ray sweep
+################################################################################
+
+version: "3.9"
+
+x-ascend-base: &ascend-base
+  image: vllm-ascend-opt:0.10
+  build: .
+  volumes:
+    - /usr/local/Ascend:/usr/local/Ascend:ro
+    - ./models:/workspace/models
+    - ./logs:/workspace/logs
+    - ./results:/workspace/results
+    - mlflow_data:/mlflow
+  environment:
+    - PYTORCH_NPU_ALLOC_CONF=max_split_size_mb:256,garbage_collection_threshold:0.8
+    - HCCL_ALGO=level0:fullmesh;level1:fullmesh
+    - HCCL_BUFFSIZE=512
+    - ASCEND_RT_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
+    - MLFLOW_TRACKING_URI=http://mlflow:5000
+
+# ── MLflow tracking server ───────────────────────────────────────────────────
+services:
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.12.0
+    ports:
+      - "5000:5000"
+    volumes:
+      - mlflow_data:/mlflow
+    command: >
+      mlflow server
+        --host 0.0.0.0
+        --port 5000
+        --backend-store-uri /mlflow/mlruns
+        --default-artifact-root /mlflow/artifacts
+
+# ── Optimized single-node vLLM serving (8x 910B, TP=8) ──────────────────────
+  vllm_serve:
+    <<: *ascend-base
+    command: bash scripts/run_optimized.sh
+    ports:
+      - "8000:8000"
+      - "9090:9090"     # Prometheus metrics
+    devices:
+      - /dev/davinci0:/dev/davinci0
+      - /dev/davinci1:/dev/davinci1
+      - /dev/davinci2:/dev/davinci2
+      - /dev/davinci3:/dev/davinci3
+      - /dev/davinci4:/dev/davinci4
+      - /dev/davinci5:/dev/davinci5
+      - /dev/davinci6:/dev/davinci6
+      - /dev/davinci7:/dev/davinci7
+      - /dev/davinci_manager:/dev/davinci_manager
+      - /dev/devmm_svm:/dev/devmm_svm
+      - /dev/hisi_hdc:/dev/hisi_hdc
+    depends_on:
+      - mlflow
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+# ── Disaggregated prefill node (NPU 0-3) ────────────────────────────────────
+  prefill_node:
+    <<: *ascend-base
+    profiles: [disagg]
+    environment:
+      - ASCEND_RT_VISIBLE_DEVICES=0,1,2,3
+      - HCCL_ALGO=level0:fullmesh;level1:fullmesh
+    command: >
+      python -m vllm.entrypoints.openai.api_server
+        --model /workspace/models/Qwen3-32B-AWQ
+        --device npu
+        --tensor-parallel-size 4
+        --quantization awq
+        --dtype bfloat16
+        --gpu-memory-utilization 0.95
+        --max-model-len 32768
+        --block-size 32
+        --kv-cache-dtype fp8_e4m3
+        --enable-prefix-caching
+        --port 8100
+        --disagg-prefill-port 8300
+
+# ── Disaggregated decode node (NPU 4-7) ─────────────────────────────────────
+  decode_node:
+    <<: *ascend-base
+    profiles: [disagg]
+    environment:
+      - ASCEND_RT_VISIBLE_DEVICES=4,5,6,7
+      - HCCL_ALGO=level0:fullmesh;level1:fullmesh
+    command: >
+      python -m vllm.entrypoints.openai.api_server
+        --model /workspace/models/Qwen3-32B-AWQ
+        --device npu
+        --tensor-parallel-size 4
+        --quantization awq
+        --dtype bfloat16
+        --gpu-memory-utilization 0.95
+        --max-model-len 32768
+        --block-size 32
+        --kv-cache-dtype fp8_e4m3
+        --speculative-method ngram
+        --num-speculative-tokens 5
+        --port 8101
+        --disagg-kv-source http://prefill_node:8300
+    depends_on:
+      - prefill_node
+
+# ── Ray sweep (hyperparameter tuning) ───────────────────────────────────────
+  ray_head:
+    <<: *ascend-base
+    profiles: [sweep]
+    command: bash -c "ray start --head --port 6379 && python scripts/run_sweep.py"
+    ports:
+      - "8265:8265"   # Ray dashboard
+      - "6379:6379"   # Ray head port
+
+# ── Phoenix observability ────────────────────────────────────────────────────
+  phoenix:
+    image: arizephoenix/phoenix:latest
+    profiles: [default, sweep]
+    ports:
+      - "6006:6006"
+    environment:
+      - PHOENIX_WORKING_DIR=/phoenix_data
+    volumes:
+      - phoenix_data:/phoenix_data
+
+volumes:
+  mlflow_data:
+  phoenix_data:
