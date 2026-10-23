@@ -1,0 +1,15 @@
+[project]
+name = "triton-tutorial-lab"
+version = "0.1.0"
+description = "Official Triton tutorials in an isolated H100 environment"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "torch==2.14.1",
+    "triton==3.8.0",
+    "numpy",
+    "matplotlib",
+    "pandas",
+    "pytest",
+    "tabulate",
+    "llnl-hatchet",
+]

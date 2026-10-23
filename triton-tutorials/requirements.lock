@@ -1,0 +1,142 @@
+arpeggio==2.0.3
+    # via textx
+caliper-reader==0.4.1
+    # via llnl-hatchet
+colorama==0.4.6 ; sys_platform == 'win32'
+    # via pytest
+contourpy==1.4.0
+    # via matplotlib
+cuda-bindings==13.4.4 ; sys_platform == 'linux'
+    # via torch
+cuda-pathfinder==1.8.3 ; sys_platform == 'linux'
+    # via cuda-bindings
+cuda-toolkit==13.0.3.0 ; sys_platform == 'linux'
+    # via torch
+cycler==0.12.1
+    # via matplotlib
+dill==0.4.1
+    # via multiprocess
+filelock==4.2.4
+    # via torch
+fonttools==4.67.0
+    # via matplotlib
+fsspec==2026.9.0
+    # via torch
+iniconfig==2.3.1
+    # via pytest
+jinja2==3.1.6
+    # via torch
+kiwisolver==1.5.1
+    # via matplotlib
+llnl-hatchet==2026.2.0
+    # via triton-tutorial-lab
+markupsafe==3.0.4
+    # via jinja2
+matplotlib==3.11.2
+    # via
+    #   llnl-hatchet
+    #   triton-tutorial-lab
+mpmath==1.3.0
+    # via sympy
+multiprocess==0.70.19
+    # via llnl-hatchet
+networkx==3.7
+    # via torch
+numpy==2.5.4
+    # via
+    #   contourpy
+    #   llnl-hatchet
+    #   matplotlib
+    #   pandas
+    #   triton-tutorial-lab
+nvidia-cublas==13.1.1.3 ; sys_platform == 'linux'
+    # via
+    #   cuda-toolkit
+    #   nvidia-cudnn-cu13
+    #   nvidia-cusolver
+nvidia-cuda-cupti==13.0.85 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
+    # via cuda-toolkit
+nvidia-cuda-nvrtc==13.0.88 ; sys_platform == 'linux'
+    # via
+    #   cuda-toolkit
+    #   nvidia-cublas
+nvidia-cuda-runtime==13.0.96 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
+    # via cuda-toolkit
+nvidia-cudnn-cu13==9.24.0.43 ; sys_platform == 'linux'
+    # via torch
+nvidia-cufft==12.0.0.61 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
+    # via cuda-toolkit
+nvidia-cufile==1.15.1.6 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
+    # via cuda-toolkit
+nvidia-curand==10.4.0.35 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
+    # via cuda-toolkit
+nvidia-cusolver==12.0.4.66 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
+    # via cuda-toolkit
+nvidia-cusparse==12.6.3.3 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
+    # via
+    #   cuda-toolkit
+    #   nvidia-cusolver
+nvidia-cusparselt-cu13==0.8.1 ; sys_platform == 'linux'
+    # via torch
+nvidia-nccl-cu13==2.30.7 ; sys_platform == 'linux'
+    # via torch
+nvidia-nvjitlink==13.4.92 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
+    # via
+    #   cuda-toolkit
+    #   nvidia-cufft
+    #   nvidia-cusolver
+    #   nvidia-cusparse
+nvidia-nvshmem-cu13==3.4.5 ; sys_platform == 'linux'
+    # via torch
+nvidia-nvtx==13.0.85 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
+    # via cuda-toolkit
+packaging==26.3
+    # via
+    #   matplotlib
+    #   pytest
+pandas==2.3.3
+    # via
+    #   llnl-hatchet
+    #   triton-tutorial-lab
+pillow==13.0.0
+    # via matplotlib
+pluggy==1.7.0
+    # via pytest
+pydot==4.0.1
+    # via llnl-hatchet
+pygments==2.21.0
+    # via pytest
+pyparsing==3.3.3
+    # via
+    #   matplotlib
+    #   pydot
+pytest==9.1.1
+    # via triton-tutorial-lab
+python-dateutil==2.9.0.post0
+    # via
+    #   matplotlib
+    #   pandas
+pytz==2026.5
+    # via pandas
+pyyaml==6.0.3
+    # via llnl-hatchet
+setuptools==84.2.1
+    # via torch
+six==1.17.0
+    # via python-dateutil
+sympy==1.14.0
+    # via torch
+tabulate==0.10.0
+    # via triton-tutorial-lab
+textx==4.4.0
+    # via llnl-hatchet
+torch==2.14.1
+    # via triton-tutorial-lab
+triton==3.8.0
+    # via
+    #   torch
+    #   triton-tutorial-lab
+typing-extensions==4.16.0
+    # via torch
+tzdata==2026.5
+    # via pandas

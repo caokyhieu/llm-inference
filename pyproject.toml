@@ -1,0 +1,27 @@
+[project]
+name = "llm-inference-labs"
+version = "0.1.0"
+description = "Shared environment for Nano-vLLM, quantization, and VLM learning"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "nano-vllm",
+    "qwen-quantization-lab",
+    "vlm-concepts-lab[qwen]",
+    "pandas",
+    "pytest",
+]
+
+[tool.uv]
+package = false
+environments = ["sys_platform == 'linux' and platform_machine == 'x86_64'"]
+
+[tool.uv.workspace]
+members = ["nano-vllm", "quantization-lab", "vlm-lab"]
+exclude = ["triton-tutorials"]
+
+[tool.uv.sources]
+nano-vllm = { workspace = true }
+qwen-quantization-lab = { workspace = true }
+vlm-concepts-lab = { workspace = true }
+# Official wheel matching PyTorch 2.6, CUDA 12, Python 3.12, and host glibc 2.31.
+flash-attn = { path = ".wheels/flash_attn-2.7.3-cp312-cp312-linux_x86_64.whl" }

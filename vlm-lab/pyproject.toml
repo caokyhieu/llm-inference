@@ -1,0 +1,12 @@
+[project]
+name = "vlm-concepts-lab"
+version = "0.1.0"
+description = "Small CPU-first experiments for understanding VLM internals"
+requires-python = ">=3.10,<3.14"
+dependencies = ["torch==2.6.0"]
+
+[project.optional-dependencies]
+qwen = ["transformers==4.57.6", "pillow>=10"]
+
+[tool.uv]
+package = false
