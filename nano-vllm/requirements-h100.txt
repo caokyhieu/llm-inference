@@ -1,0 +1,10 @@
+# Local H100 setup: Python 3.12, CUDA 12, and a matching FlashAttention wheel.
+-e .
+torch==2.6.0
+transformers>=4.56,<5
+huggingface-hub>=0.34,<1
+# Required by triton.testing.perf_report in the softmax tutorial.
+matplotlib
+pandas
+# This older official build supports the machine's glibc 2.31.
+flash-attn @ https://github.com/Dao-AILab/flash-attention/releases/download/v2.7.3/flash_attn-2.7.3+cu12torch2.6cxx11abiFALSE-cp312-cp312-linux_x86_64.whl#sha256=944f5c6ba4ff1dd9261ddde56dac3299596b2d1e5110b2cff474fafe03cfd991
